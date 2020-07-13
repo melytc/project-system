@@ -20,20 +20,20 @@
     <!--This property sets the default output types supported by the project system.-->
     <SupportedOutputTypes Condition="'$(SupportedOutputTypes)' == ''">Exe;WinExe;Library</SupportedOutputTypes>
     <SuppressOutOfDateMessageOnBuild Condition="'$(SuppressOutOfDateMessageOnBuild)' == ''">true</SuppressOutOfDateMessageOnBuild>
-    
+
     <!-- Tells CPS which target to run for the Package solution build type -->
     <PackageAction Condition="'$(PackageAction)' == ''">Pack</PackageAction>
   </PropertyGroup>
-  
+
   <PropertyGroup Condition="'$(AssemblyReferenceTabs)' == '' And '$(UsingMicrosoftNETSdk)' == 'true'">
-    
+
     <!-- You cannot choose individual framework assemblies in .NET Core/.NET Standard, and AssemblyFoldersEx
          is not supported, so completely opt out of the Assembly category in Reference Manager by default. -->
     <AssemblyReferenceTabs>0</AssemblyReferenceTabs>
-    
+
     <!-- However, .NET Framework supports choosing individual framework assemblies, so opt into that tab  -->
     <AssemblyReferenceTabs Condition="'$(TargetFrameworkIdentifier)' == '.NETFramework'">TAB_ASSEMBLY_FRAMEWORK</AssemblyReferenceTabs>
-  
+
   </PropertyGroup>
 
 
@@ -47,7 +47,7 @@
   <!--
     Locate the approriate localized xaml resources based on the language ID or name.
 
-    The logic here matches the resource manager sufficiently to handle the fixed set of 
+    The logic here matches the resource manager sufficiently to handle the fixed set of
     possible VS languages and directories on disk.
 
     We cannot respect the exact probe order of the resource manager as this has to evaluate statically
@@ -93,7 +93,7 @@
     <ProjectCapability Include="LaunchProfiles" />
     <ProjectCapability Include="NoGeneralDependentFileIcon"/>
     <ProjectCapability Include="PackageReferences" Condition="'$(RestoreProjectStyle)' == 'PackageReference'"/>
-    
+
     <!--
       List of capabilities below is adding back common capabilities defined in imported targets.
       We disabled them with the property DefineCommonCapabilities=false to get rid of default
@@ -101,7 +101,7 @@
     -->
     <ProjectCapability Include="
                           AssemblyReferences;
-                          ProjectReferences;                          
+                          ProjectReferences;
                           WinRTReferences;
                           OutputGroups;
                           AllTargetOutputGroups;
@@ -157,7 +157,7 @@
     <PropertyPageSchema Include="$(ManagedXamlResourcesDirectory)Content.BrowseObject.xaml">
       <Context>BrowseObject</Context>
     </PropertyPageSchema>
-    
+
     <PropertyPageSchema Include="$(ManagedXamlNeutralResourcesDirectory)EmbeddedResource.xaml">
       <Context>File</Context>
     </PropertyPageSchema>
@@ -221,7 +221,7 @@
       <Context>ProjectSubscriptionService</Context>
     </PropertyPageSchema>
 
-    <PropertyPageSchema Include="$(ManagedXamlResourcesDirectory)ConfigurationGeneral.xaml">
+    <PropertyPageSchema Include="$(ManagedXamlNeutralResourcesDirectory)ConfigurationGeneral.xaml">
       <Context>Project;ProjectSubscriptionService</Context>
     </PropertyPageSchema>
 
@@ -308,12 +308,12 @@
     <PropertyPageSchema Include="$(ManagedXamlNeutralResourcesDirectory)CollectedPackageDownload.xaml">
       <Context>ProjectSubscriptionService</Context>
     </PropertyPageSchema>
-    
+
     <!-- Central Package Versions -->
     <PropertyPageSchema Include="$(ManagedXamlNeutralResourcesDirectory)CollectedPackageVersion.xaml">
       <Context>ProjectSubscriptionService</Context>
     </PropertyPageSchema>
-    
+
     <!-- Project references -->
     <PropertyPageSchema Include="$(ManagedXamlResourcesDirectory)ProjectReference.xaml">
       <Context>Project;BrowseObject</Context>
@@ -343,7 +343,7 @@
 
     <!-- Tool references -->
     <PropertyPageSchema Include="$(ManagedXamlNeutralResourcesDirectory)DotNetCliToolReference.xaml">
-      <Context>ProjectSubscriptionService;BrowseObject</Context>
+      <Context>ProjectSubscriptionService</Context>
     </PropertyPageSchema>
 
     <!-- Analyzer references -->
@@ -358,13 +358,13 @@
 
   <!-- List of external files that trigger re-evaluation & design-time builds when they are added or removed, or edited -->
   <ItemGroup>
-    
+
     <!-- NuGet assets file -->
-    <AdditionalDesignTimeBuildInput Include="$(ProjectAssetsFile)" ContentSensitive="true" />   
-  
+    <AdditionalDesignTimeBuildInput Include="$(ProjectAssetsFile)" ContentSensitive="true" />
+
     <!-- Potential Editor config locations, we only want to trigger design-time builds on removal/addition and not edits  -->
-    <AdditionalDesignTimeBuildInput Include="@(PotentialEditorConfigFiles)" ContentSensitive="false" />   
-  
+    <AdditionalDesignTimeBuildInput Include="@(PotentialEditorConfigFiles)" ContentSensitive="false" />
+
   </ItemGroup>
 
   <!-- Find all potential locations of "global.json" starting from the Solution directory and walking backwards -->
@@ -375,7 +375,7 @@
   </ItemGroup>
 
   <!--
-    EmbeddedFiles are source files to be embedded to the PDB. 
+    EmbeddedFiles are source files to be embedded to the PDB.
     We need to set Visible to false in order to not display duplicate entries in project UI.
   -->
   <ItemDefinitionGroup>
@@ -443,7 +443,7 @@
       <!-- app.config -->
       <!-- The property AppConfig, created in PrepareForBuild, is used instead of AppConfigWithTargetPath because GenerateSupportedRuntime
            rewrites AppConfigWithTargetPath to point to the intermediate filename. This is needed because Fast up-to-date needs to compare
-           the timestamp of the source filename (AppConfig) with destination filename. 
+           the timestamp of the source filename (AppConfig) with destination filename.
            https://github.com/microsoft/msbuild/blob/64c8e4a18e7cf7f064fbad304ea7ed877cdaa0a1/src/Tasks/Microsoft.Common.CurrentVersion.targets#L1109-L1122 -->
       <UpToDateCheckBuilt Condition=" '@(AppConfigWithTargetPath)' != '' " Include="@(AppConfigWithTargetPath->'$(OutDir)%(TargetPath)')" Original="$(AppConfig)"/>
     </ItemGroup>
