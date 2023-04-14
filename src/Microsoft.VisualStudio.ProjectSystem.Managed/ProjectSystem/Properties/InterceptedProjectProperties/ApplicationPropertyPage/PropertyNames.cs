@@ -10,6 +10,7 @@ namespace Microsoft.VisualStudio.ProjectSystem.Properties;
         // Project properties
         internal const string UseWPF = "UseWPF";
         internal const string UseWindowsForms = "UseWindowsForms";
+        internal const string ApplicationHighDpiMode = "ApplicationHighDpiMode";
 
         // MSBuild properties
         internal const string ApplicationFrameworkMSBuild = "MyType";

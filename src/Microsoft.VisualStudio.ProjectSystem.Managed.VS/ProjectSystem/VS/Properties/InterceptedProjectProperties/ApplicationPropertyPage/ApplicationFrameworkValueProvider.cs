@@ -60,7 +60,7 @@ namespace Microsoft.VisualStudio.ProjectSystem.Properties
             }
             else
             {
-                return await SetPropertyValueAsync(propertyName, unevaluatedPropertyValue);
+                return await SetPropertyValueAsync(propertyName, unevaluatedPropertyValue, defaultProperties);
             }     
         }
 
@@ -297,7 +297,7 @@ namespace Microsoft.VisualStudio.ProjectSystem.Properties
             return value;
         }
 
-        private async Task<string?> SetPropertyValueAsync(string propertyName, string unevaluatedPropertyValue)
+        private async Task<string?> SetPropertyValueAsync(string propertyName, string unevaluatedPropertyValue, IProjectProperties defaultProperties)
         {
             // ValueProvider needs to convert string enums to valid values to be saved.
             if (propertyName == AuthenticationMode)
@@ -319,7 +319,7 @@ namespace Microsoft.VisualStudio.ProjectSystem.Properties
                 };
             }
 
-            await (propertyName switch 
+            await (propertyName switch
             {
                 ApplicationFramework => _myAppXmlFileAccessor.SetMySubMainAsync(unevaluatedPropertyValue),
                 EnableVisualStyles => _myAppXmlFileAccessor.SetEnableVisualStylesAsync(Convert.ToBoolean(unevaluatedPropertyValue)),
@@ -333,6 +333,32 @@ namespace Microsoft.VisualStudio.ProjectSystem.Properties
 
                 _ => throw new InvalidOperationException($"The provider does not support the '{propertyName}' property.")
             });
+
+            // The WinForms designer needs to know the value of the HighDpiMode property in the project file.
+            // More details: https://github.com/dotnet/project-system/issues/8980
+            if (propertyName == HighDpiMode)
+            {
+                switch (unevaluatedPropertyValue)
+                {
+                    case "0":
+                        unevaluatedPropertyValue = "DpiUnaware";
+                        break;
+                    case "1":
+                        unevaluatedPropertyValue = "SystemAware";
+                        break;
+                    case "2":
+                        unevaluatedPropertyValue = "PerMonitor";
+                        break;
+                    case "3":
+                        unevaluatedPropertyValue = "PerMonitorV2";
+                        break;
+                    case "4":
+                        unevaluatedPropertyValue = "DpiUnawareGdiScaled";
+                        break;
+                }
+
+                await defaultProperties.SetPropertyValueAsync(ApplicationHighDpiMode, unevaluatedPropertyValue);
+            }
 
             return null;
         }
